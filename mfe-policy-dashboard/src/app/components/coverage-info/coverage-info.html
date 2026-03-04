@@ -1,0 +1,30 @@
+<mat-accordion>
+  @for (coverage of coverages; track coverage.type) {
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon class="coverage-icon">verified_user</mat-icon>
+          {{ coverage.type }}
+        </mat-panel-title>
+        <mat-panel-description> Limit: ₹{{ coverage.limit | number }} </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div class="coverage-details">
+        <div class="detail-row">
+          <span class="detail-label">Description</span>
+          <span class="detail-value">{{ coverage.description }}</span>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="detail-row">
+          <span class="detail-label">Coverage Limit</span>
+          <span class="detail-value highlight">₹{{ coverage.limit | number }}</span>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="detail-row">
+          <span class="detail-label">Deductible</span>
+          <span class="detail-value">₹{{ coverage.deductible | number }}</span>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  }
+</mat-accordion>

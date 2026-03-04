@@ -1,0 +1,225 @@
+<div class="payment-history-container">
+  <h2 class="page-title">
+    <mat-icon>history</mat-icon>
+    Payment History
+  </h2>
+
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="stat">
+          <mat-icon class="stat-icon transactions">receipt_long</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ totalTransactions }}</span>
+            <span class="stat-label">Total Transactions</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="stat">
+          <mat-icon class="stat-icon amount">account_balance_wallet</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">₹{{ totalPaid | number: '1.2-2' }}</span>
+            <span class="stat-label">Total Paid</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="summary-card">
+      <mat-card-content>
+        <div class="stat">
+          <mat-icon class="stat-icon pay">add_circle</mat-icon>
+          <div class="stat-info">
+            <a routerLink="/payments" class="action-link">Make Payment</a>
+            <span class="stat-label">Quick Action</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Filter -->
+  <mat-card class="table-card">
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Search Payments</mat-label>
+        <input
+          matInput
+          (keyup)="applyFilter($event)"
+          placeholder="Search by receipt, policy, method..."
+          #filterInput
+        />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      @if (dataSource.data.length === 0) {
+        <div class="empty-state">
+          <mat-icon>payment</mat-icon>
+          <h3>No Payments Yet</h3>
+          <p>Your payment history will appear here once you make your first premium payment.</p>
+          <a mat-raised-button color="primary" routerLink="/payments">
+            <mat-icon>add</mat-icon>
+            Make First Payment
+          </a>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table mat-table [dataSource]="dataSource" matSort class="payments-table">
+            <!-- Receipt Number -->
+            <ng-container matColumnDef="receiptNumber">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Receipt #</th>
+              <td mat-cell *matCellDef="let payment">{{ payment.receiptNumber }}</td>
+            </ng-container>
+
+            <!-- Policy ID -->
+            <ng-container matColumnDef="policyId">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Policy ID</th>
+              <td mat-cell *matCellDef="let payment">{{ payment.policyId }}</td>
+            </ng-container>
+
+            <!-- Amount -->
+            <ng-container matColumnDef="amount">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
+              <td mat-cell *matCellDef="let payment" class="amount-cell">
+                ₹{{ payment.amount | number: '1.2-2' }}
+              </td>
+            </ng-container>
+
+            <!-- Payment Method -->
+            <ng-container matColumnDef="paymentMethod">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Method</th>
+              <td mat-cell *matCellDef="let payment">
+                {{ payment.paymentMethod | titlecase }}
+              </td>
+            </ng-container>
+
+            <!-- Payment Date -->
+            <ng-container matColumnDef="paymentDate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+              <td mat-cell *matCellDef="let payment">
+                {{ payment.paymentDate | date: 'mediumDate' }}
+              </td>
+            </ng-container>
+
+            <!-- Status -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+              <td mat-cell *matCellDef="let payment">
+                <mat-chip [color]="getStatusColor(payment.status)" selected>
+                  {{ payment.status | titlecase }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Actions -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let payment">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  matTooltip="View Receipt"
+                  (click)="viewReceipt(payment)"
+                >
+                  <mat-icon>receipt</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+            <!-- No data row -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+                No payments matching "{{ filterInput.value }}"
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons> </mat-paginator>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Inline Receipt Overlay -->
+@if (showReceipt && receiptPayment) {
+  <div class="receipt-overlay" (click)="closeReceipt()">
+    <div class="receipt-panel" (click)="$event.stopPropagation()">
+      <div class="receipt-header">
+        <mat-icon class="brand-icon">shield</mat-icon>
+        <h2>InsureHub</h2>
+        <p class="subtitle">Premium Payment Receipt</p>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="receipt-body">
+        <div class="receipt-row">
+          <span class="label">Receipt Number</span>
+          <span class="value highlight">{{ receiptPayment.receiptNumber }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Payment ID</span>
+          <span class="value">{{ receiptPayment.paymentId }}</span>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        @if (receiptPolicy) {
+          <div class="section-title">Policy Details</div>
+          <div class="receipt-row">
+            <span class="label">Policy Number</span>
+            <span class="value">{{ receiptPolicy.policyNumber }}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Holder Name</span>
+            <span class="value">{{ receiptPolicy.holderName }}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Policy Type</span>
+            <span class="value">{{ receiptPolicy.type | titlecase }}</span>
+          </div>
+          <mat-divider></mat-divider>
+        }
+
+        <div class="section-title">Payment Details</div>
+        <div class="receipt-row">
+          <span class="label">Amount Paid</span>
+          <span class="value amount">₹{{ receiptPayment.amount | number: '1.2-2' }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Payment Method</span>
+          <span class="value">{{ receiptPayment.paymentMethod | titlecase }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Payment Date</span>
+          <span class="value">{{ receiptPayment.paymentDate | date: 'medium' }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Status</span>
+          <span class="value status-badge">{{ receiptPayment.status | titlecase }}</span>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="receipt-footer">
+        <p class="disclaimer">
+          This is a computer-generated receipt and does not require a signature.
+        </p>
+        <div class="actions">
+          <button mat-button (click)="printReceipt()"><mat-icon>print</mat-icon> Print</button>
+          <button mat-raised-button color="primary" (click)="closeReceipt()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

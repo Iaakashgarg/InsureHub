@@ -1,0 +1,72 @@
+<div class="receipt-dialog">
+  <div class="receipt-header">
+    <mat-icon class="brand-icon">shield</mat-icon>
+    <h2>InsureHub</h2>
+    <p class="subtitle">Premium Payment Receipt</p>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="receipt-body">
+    <div class="receipt-row">
+      <span class="label">Receipt Number</span>
+      <span class="value highlight">{{ data.payment.receiptNumber }}</span>
+    </div>
+
+    <div class="receipt-row">
+      <span class="label">Payment ID</span>
+      <span class="value">{{ data.payment.paymentId }}</span>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    @if (data.policy) {
+      <div class="section-title">Policy Details</div>
+      <div class="receipt-row">
+        <span class="label">Policy Number</span>
+        <span class="value">{{ data.policy.policyNumber }}</span>
+      </div>
+      <div class="receipt-row">
+        <span class="label">Holder Name</span>
+        <span class="value">{{ data.policy.holderName }}</span>
+      </div>
+      <div class="receipt-row">
+        <span class="label">Policy Type</span>
+        <span class="value">{{ data.policy.type | titlecase }}</span>
+      </div>
+
+      <mat-divider></mat-divider>
+    }
+
+    <div class="section-title">Payment Details</div>
+    <div class="receipt-row">
+      <span class="label">Amount Paid</span>
+      <span class="value amount">₹{{ data.payment.amount | number: '1.2-2' }}</span>
+    </div>
+    <div class="receipt-row">
+      <span class="label">Payment Method</span>
+      <span class="value">{{ data.payment.paymentMethod | titlecase }}</span>
+    </div>
+    <div class="receipt-row">
+      <span class="label">Payment Date</span>
+      <span class="value">{{ data.payment.paymentDate | date: 'medium' }}</span>
+    </div>
+    <div class="receipt-row">
+      <span class="label">Status</span>
+      <span class="value status-badge">{{ data.payment.status | titlecase }}</span>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="receipt-footer">
+    <p class="disclaimer">This is a computer-generated receipt and does not require a signature.</p>
+    <div class="actions">
+      <button mat-button (click)="printReceipt()">
+        <mat-icon>print</mat-icon>
+        Print
+      </button>
+      <button mat-raised-button color="primary" (click)="close()">Close</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+const {
+  shareAll,
+  withModuleFederationPlugin,
+} = require('@angular-architects/module-federation/webpack');
+const path = require('path');
+
+// Use environment variables for production remote URLs, fallback to localhost for dev
+const POLICY_DASHBOARD_URL = process.env.MFE_POLICY_DASHBOARD_URL || 'http://localhost:4201';
+const PREMIUM_PAYMENT_URL = process.env.MFE_PREMIUM_PAYMENT_URL || 'http://localhost:4202';
+
+const mfConfig = withModuleFederationPlugin({
+  remotes: {
+    mfePolicyDashboard: `${POLICY_DASHBOARD_URL}/remoteEntry.js`,
+    mfePremiumPayment: `${PREMIUM_PAYMENT_URL}/remoteEntry.js`,
+  },
+
+  shared: {
+    ...shareAll({ singleton: true, strictVersion: true, requiredVersion: 'auto' }),
+  },
+});
+
+// Ensure shared-lib imports resolve from this app's node_modules
+mfConfig.resolve = mfConfig.resolve || {};
+mfConfig.resolve.modules = [path.resolve(__dirname, 'node_modules'), 'node_modules'];
+
+module.exports = mfConfig;

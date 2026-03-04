@@ -1,0 +1,177 @@
+@use '@angular/material' as mat;
+
+// ── Design Tokens ──
+:root {
+  --ih-primary: #6d28d9;
+  --ih-primary-light: #8b5cf6;
+  --ih-primary-dark: #5b21b6;
+  --ih-accent: #06b6d4;
+  --ih-accent-light: #22d3ee;
+  --ih-success: #10b981;
+  --ih-success-light: #d1fae5;
+  --ih-warning: #f59e0b;
+  --ih-warning-light: #fef3c7;
+  --ih-danger: #ef4444;
+  --ih-danger-light: #fee2e2;
+  --ih-surface: #f8fafc;
+  --ih-surface-card: #ffffff;
+  --ih-border: #e2e8f0;
+  --ih-text-primary: #1e293b;
+  --ih-text-secondary: #64748b;
+  --ih-text-muted: #94a3b8;
+  --ih-gradient-primary: linear-gradient(135deg, #6d28d9 0%, #4f46e5 50%, #06b6d4 100%);
+  --ih-gradient-warm: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+  --ih-gradient-success: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  --ih-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --ih-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --ih-shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.06), 0 4px 10px rgba(0, 0, 0, 0.04);
+  --ih-shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.04);
+  --ih-radius-sm: 8px;
+  --ih-radius-md: 12px;
+  --ih-radius-lg: 16px;
+  --ih-radius-xl: 20px;
+  --ih-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$violet-palette,
+        tertiary: mat.$cyan-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+body {
+  color-scheme: light;
+  background-color: var(--ih-surface);
+  color: var(--ih-text-primary);
+  font-family:
+    'Inter',
+    'Roboto',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  margin: 0;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// ── Scrollbar ──
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 99px;
+  &:hover {
+    background: #94a3b8;
+  }
+}
+
+// ── Global Material Overrides ──
+.mat-mdc-card {
+  border-radius: var(--ih-radius-md) !important;
+  box-shadow: var(--ih-shadow-sm) !important;
+  border: 1px solid var(--ih-border);
+  transition:
+    box-shadow var(--ih-transition),
+    transform var(--ih-transition) !important;
+}
+
+.mat-mdc-raised-button {
+  border-radius: var(--ih-radius-sm) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.3px !important;
+  text-transform: none !important;
+}
+
+.mat-mdc-table {
+  border-radius: var(--ih-radius-md) !important;
+  overflow: hidden;
+
+  .mat-mdc-header-row {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  }
+
+  .mat-mdc-header-cell {
+    color: var(--ih-text-secondary) !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  .mat-mdc-row {
+    transition: background var(--ih-transition) !important;
+    &:hover {
+      background: rgba(109, 40, 217, 0.03) !important;
+    }
+  }
+}
+
+.mat-mdc-chip {
+  font-weight: 600 !important;
+  font-size: 12px !important;
+}
+
+.mat-mdc-form-field-subscript-wrapper {
+  font-size: 11px;
+}
+
+// ── Snackbar Styles ──
+.success-snackbar {
+  --mdc-snackbar-container-color: #065f46;
+  --mdc-snackbar-supporting-text-color: #fff;
+  .mdc-snackbar__surface {
+    border-radius: var(--ih-radius-sm) !important;
+  }
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #991b1b;
+  --mdc-snackbar-supporting-text-color: #fff;
+  .mdc-snackbar__surface {
+    border-radius: var(--ih-radius-sm) !important;
+  }
+}
+
+// ── Animations ──
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}

@@ -1,0 +1,51 @@
+<mat-toolbar class="header-toolbar">
+  <div class="brand-section">
+    <div class="brand-logo">
+      <mat-icon class="brand-icon">shield</mat-icon>
+    </div>
+    <div class="brand-text">
+      <span class="brand-name">{{ title }}</span>
+      <span class="brand-tagline">Insurance Portal</span>
+    </div>
+  </div>
+
+  <span class="spacer"></span>
+
+  <nav class="header-nav">
+    <a
+      class="nav-item"
+      routerLink="/"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <mat-icon>dashboard</mat-icon>
+      <span class="nav-label">Dashboard</span>
+    </a>
+    <a class="nav-item" routerLink="/policies" routerLinkActive="active-link">
+      <mat-icon>description</mat-icon>
+      <span class="nav-label">Policies</span>
+    </a>
+    <a
+      class="nav-item"
+      routerLink="/payments"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <mat-icon>payment</mat-icon>
+      <span class="nav-label">Pay Premium</span>
+    </a>
+    <a class="nav-item" routerLink="/payments/history" routerLinkActive="active-link">
+      <mat-icon>receipt_long</mat-icon>
+      <span class="nav-label">History</span>
+    </a>
+  </nav>
+
+  <div class="header-actions">
+    <button mat-icon-button class="notification-btn" matTooltip="Notifications">
+      <mat-icon>notifications_none</mat-icon>
+    </button>
+    <div class="avatar-circle">
+      <span>AG</span>
+    </div>
+  </div>
+</mat-toolbar>

@@ -1,0 +1,87 @@
+<mat-card class="policy-list-card">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon class="header-icon">description</mat-icon>
+      My Insurance Policies
+    </mat-card-title>
+    <mat-card-subtitle>{{ dataSource.data.length }} policies found</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource" matSort class="policy-table">
+        <ng-container matColumnDef="policyNumber">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Policy #</th>
+          <td mat-cell *matCellDef="let policy">
+            <strong>{{ policy.policyNumber }}</strong>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="holderName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Holder</th>
+          <td mat-cell *matCellDef="let policy">{{ policy.holderName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="type">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+          <td mat-cell *matCellDef="let policy">
+            <span class="type-badge">
+              <mat-icon class="type-icon">{{ getTypeIcon(policy.type) }}</mat-icon>
+              {{ policy.type | titlecase }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="premiumAmount">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Monthly Premium</th>
+          <td mat-cell *matCellDef="let policy">
+            <span class="premium-amount">₹{{ policy.premiumAmount | number }}</span>
+            @if (premiumResults.get(policy.id)) {
+              <br />
+              <small class="projected"
+                >Annual: ₹{{ premiumResults.get(policy.id).projectedAnnualPremium | number }}</small
+              >
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+          <td mat-cell *matCellDef="let policy">
+            <mat-chip [highlighted]="true" [color]="getStatusColor(policy.status)">
+              {{ policy.status | titlecase }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let policy">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="viewPolicy(policy)"
+              matTooltip="View Details"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+            @if (policy.status === 'active') {
+              <button
+                mat-icon-button
+                color="accent"
+                (click)="payPremium(policy)"
+                matTooltip="Pay Premium"
+              >
+                <mat-icon>payment</mat-icon>
+              </button>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="policy-row"></tr>
+      </table>
+    </div>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+  </mat-card-content>
+</mat-card>

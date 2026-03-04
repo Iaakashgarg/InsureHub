@@ -1,0 +1,107 @@
+<div class="dashboard-container">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <mat-icon>waving_hand</mat-icon>
+        <span>Welcome back</span>
+      </div>
+      <h1 class="hero-title">Insurance Dashboard</h1>
+      <p class="hero-subtitle">
+        Manage your policies, track payments, and stay protected — all in one place.
+      </p>
+    </div>
+    <div class="hero-visual">
+      <mat-icon class="hero-icon">security</mat-icon>
+    </div>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-grid">
+    <div class="stat-card policies-stat" (click)="navigateTo('/policies')">
+      <div class="stat-icon-wrapper">
+        <mat-icon>description</mat-icon>
+      </div>
+      <div class="stat-body">
+        <span class="stat-number">{{ totalPolicies }}</span>
+        <span class="stat-label">Total Policies</span>
+      </div>
+      <mat-icon class="stat-arrow">arrow_forward</mat-icon>
+    </div>
+
+    <div class="stat-card active-stat" (click)="navigateTo('/policies')">
+      <div class="stat-icon-wrapper">
+        <mat-icon>verified</mat-icon>
+      </div>
+      <div class="stat-body">
+        <span class="stat-number">{{ activePolicies }}</span>
+        <span class="stat-label">Active Policies</span>
+      </div>
+      <mat-icon class="stat-arrow">arrow_forward</mat-icon>
+    </div>
+
+    <div class="stat-card pending-stat" (click)="navigateTo('/payments')">
+      <div class="stat-icon-wrapper">
+        <mat-icon>pending_actions</mat-icon>
+      </div>
+      <div class="stat-body">
+        <span class="stat-number">{{ pendingPayments }}</span>
+        <span class="stat-label">Pending Payments</span>
+      </div>
+      <mat-icon class="stat-arrow">arrow_forward</mat-icon>
+    </div>
+
+    <div class="stat-card paid-stat" (click)="navigateTo('/payments/history')">
+      <div class="stat-icon-wrapper">
+        <mat-icon>account_balance_wallet</mat-icon>
+      </div>
+      <div class="stat-body">
+        <span class="stat-number">₹{{ totalPaid | number }}</span>
+        <span class="stat-label">Total Paid</span>
+      </div>
+      <mat-icon class="stat-arrow">arrow_forward</mat-icon>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions-section">
+    <h2 class="section-heading">
+      <mat-icon>bolt</mat-icon>
+      Quick Actions
+    </h2>
+    <div class="actions-grid">
+      <button class="action-card" (click)="navigateTo('/policies')">
+        <div class="action-icon policies">
+          <mat-icon>search</mat-icon>
+        </div>
+        <div class="action-info">
+          <span class="action-title">View Policies</span>
+          <span class="action-desc">Browse and manage your insurance plans</span>
+        </div>
+        <mat-icon class="action-chevron">chevron_right</mat-icon>
+      </button>
+
+      <button class="action-card" (click)="navigateTo('/payments')">
+        <div class="action-icon payments">
+          <mat-icon>payment</mat-icon>
+        </div>
+        <div class="action-info">
+          <span class="action-title">Pay Premium</span>
+          <span class="action-desc">Make a payment towards your premium</span>
+        </div>
+        <mat-icon class="action-chevron">chevron_right</mat-icon>
+      </button>
+
+      <button class="action-card" (click)="navigateTo('/payments/history')">
+        <div class="action-icon history">
+          <mat-icon>receipt_long</mat-icon>
+        </div>
+        <div class="action-info">
+          <span class="action-title">Payment History</span>
+          <span class="action-desc">View receipts and past transactions</span>
+        </div>
+        <mat-icon class="action-chevron">chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

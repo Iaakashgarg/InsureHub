@@ -1,0 +1,415 @@
+<div class="payment-form-container">
+  <h2 class="page-title">
+    <mat-icon>payment</mat-icon>
+    Pay Premium
+  </h2>
+
+  <mat-stepper #stepper linear>
+    <!-- Step 1: Select Policy -->
+    <mat-step [stepControl]="policySelectionForm" label="Select Policy">
+      <form [formGroup]="policySelectionForm">
+        <div class="step-content">
+          <mat-card class="step-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar>description</mat-icon>
+              <mat-card-title>Choose a Policy</mat-card-title>
+              <mat-card-subtitle>Select the policy you want to pay premium for</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Select Policy</mat-label>
+                <mat-select formControlName="policyId" (selectionChange)="onPolicySelected()">
+                  @for (policy of policies; track policy.policyId) {
+                    <mat-option [value]="policy.policyId">
+                      {{ policy.policyNumber }} — {{ policy.holderName }} ({{
+                        policy.type | titlecase
+                      }})
+                    </mat-option>
+                  }
+                </mat-select>
+                @if (fieldHasError(policySelectionForm, 'policyId', 'required')) {
+                  <mat-error>Please select a policy</mat-error>
+                } @else {
+                  <mat-hint>Choose an active policy</mat-hint>
+                }
+              </mat-form-field>
+
+              @if (selectedPolicy) {
+                <div class="policy-summary">
+                  <h3>Policy Summary</h3>
+                  <mat-divider></mat-divider>
+                  <div class="summary-grid">
+                    <div class="summary-item">
+                      <span class="label">Policy Number</span>
+                      <span class="value">{{ selectedPolicy.policyNumber }}</span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="label">Holder Name</span>
+                      <span class="value">{{ selectedPolicy.holderName }}</span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="label">Type</span>
+                      <span class="value">{{ selectedPolicy.type | titlecase }}</span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="label">Premium Amount</span>
+                      <span class="value amount"
+                        >₹{{ selectedPolicy.premiumAmount | number: '1.2-2' }}</span
+                      >
+                    </div>
+                    <div class="summary-item">
+                      <span class="label">Status</span>
+                      <span class="value status-chip" [class]="'status-' + selectedPolicy.status">
+                        {{ selectedPolicy.status | titlecase }}
+                      </span>
+                    </div>
+                    <div class="summary-item">
+                      <span class="label">Next Due Date</span>
+                      <span class="value">{{
+                        selectedPolicy.nextDueDate | date: 'mediumDate'
+                      }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <button
+                mat-raised-button
+                color="primary"
+                matStepperNext
+                [disabled]="!policySelectionForm.valid"
+              >
+                <span class="pay-btn-content">
+                  Next
+                  <mat-icon>arrow_forward</mat-icon>
+                </span>
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 2: Payment Details -->
+    <mat-step [stepControl]="paymentDetailsForm" label="Payment Details">
+      <form [formGroup]="paymentDetailsForm">
+        <div class="step-content">
+          <mat-card class="step-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar>credit_card</mat-icon>
+              <mat-card-title>Payment Information</mat-card-title>
+              <mat-card-subtitle>Enter your payment details</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <div class="payment-method-section">
+                <h3>Select Payment Method</h3>
+                <mat-radio-group formControlName="paymentMethod" class="method-group">
+                  @for (method of paymentMethods; track method.value) {
+                    <mat-radio-button [value]="method.value" class="method-option">
+                      <mat-icon>{{ method.icon }}</mat-icon>
+                      {{ method.label }}
+                    </mat-radio-button>
+                  }
+                </mat-radio-group>
+              </div>
+
+              <mat-divider></mat-divider>
+
+              <div class="amount-display">
+                <span class="amount-label">Amount to Pay</span>
+                <span class="amount-value"
+                  >₹{{ selectedPolicy?.premiumAmount | number: '1.2-2' }}</span
+                >
+              </div>
+
+              @if (isCardPayment) {
+                <div class="card-details">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Card Number</mat-label>
+                    <input
+                      matInput
+                      formControlName="cardNumber"
+                      placeholder="1234567890123456"
+                      maxlength="16"
+                    />
+                    <mat-icon matSuffix>credit_card</mat-icon>
+                    @if (fieldHasError(paymentDetailsForm, 'cardNumber', 'required')) {
+                      <mat-error>Card number is required</mat-error>
+                    } @else if (fieldHasError(paymentDetailsForm, 'cardNumber', 'pattern')) {
+                      <mat-error>Enter a valid 16-digit card number</mat-error>
+                    } @else {
+                      <mat-hint>Enter 16-digit card number</mat-hint>
+                    }
+                  </mat-form-field>
+
+                  <div class="card-row">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Expiry (MM/YY)</mat-label>
+                      <input
+                        matInput
+                        formControlName="cardExpiry"
+                        placeholder="MM/YY"
+                        maxlength="5"
+                      />
+                      @if (fieldHasError(paymentDetailsForm, 'cardExpiry', 'required')) {
+                        <mat-error>Expiry date is required</mat-error>
+                      } @else if (fieldHasError(paymentDetailsForm, 'cardExpiry', 'pattern')) {
+                        <mat-error>Use format MM/YY</mat-error>
+                      }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                      <mat-label>CVV</mat-label>
+                      <input
+                        matInput
+                        formControlName="cardCvv"
+                        placeholder="123"
+                        maxlength="3"
+                        type="password"
+                      />
+                      @if (fieldHasError(paymentDetailsForm, 'cardCvv', 'required')) {
+                        <mat-error>CVV is required</mat-error>
+                      } @else if (fieldHasError(paymentDetailsForm, 'cardCvv', 'pattern')) {
+                        <mat-error>Enter a valid 3-digit CVV</mat-error>
+                      }
+                    </mat-form-field>
+                  </div>
+                </div>
+              }
+
+              @if (isUpiPayment) {
+                <div class="upi-details">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>UPI ID</mat-label>
+                    <input matInput formControlName="upiId" placeholder="yourname@upi" />
+                    <mat-icon matSuffix>smartphone</mat-icon>
+                    @if (fieldHasError(paymentDetailsForm, 'upiId', 'required')) {
+                      <mat-error>UPI ID is required</mat-error>
+                    } @else if (fieldHasError(paymentDetailsForm, 'upiId', 'pattern')) {
+                      <mat-error>Enter a valid UPI ID (e.g. name&#64;oksbi)</mat-error>
+                    } @else {
+                      <mat-hint>Enter your UPI ID (e.g. name&#64;oksbi, name&#64;paytm)</mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+              }
+
+              @if (isNetBankingPayment) {
+                <div class="netbanking-details">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Net Banking User ID</mat-label>
+                    <input
+                      matInput
+                      formControlName="netBankingId"
+                      placeholder="Enter your net banking user ID"
+                    />
+                    <mat-icon matSuffix>account_balance</mat-icon>
+                    @if (fieldHasError(paymentDetailsForm, 'netBankingId', 'required')) {
+                      <mat-error>Net Banking User ID is required</mat-error>
+                    } @else if (fieldHasError(paymentDetailsForm, 'netBankingId', 'minlength')) {
+                      <mat-error>Must be at least 3 characters</mat-error>
+                    } @else {
+                      <mat-hint>Your registered internet banking user ID</mat-hint>
+                    }
+                  </mat-form-field>
+                </div>
+              }
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Remarks (Optional)</mat-label>
+                <textarea
+                  matInput
+                  formControlName="remarks"
+                  rows="2"
+                  maxlength="250"
+                  placeholder="Any additional notes..."
+                ></textarea>
+                @if (fieldHasError(paymentDetailsForm, 'remarks', 'maxlength')) {
+                  <mat-error>Remarks cannot exceed 250 characters</mat-error>
+                } @else {
+                  <mat-hint align="end">
+                    {{ paymentDetailsForm.get('remarks')?.value?.length || 0 }} / 250
+                  </mat-hint>
+                }
+              </mat-form-field>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <button mat-button matStepperPrevious>
+                <span class="pay-btn-content">
+                  <mat-icon>arrow_back</mat-icon>
+                  Back
+                </span>
+              </button>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="processPayment()"
+                [disabled]="isProcessing || !canProceedToPayment"
+              >
+                @if (isProcessing) {
+                  <span class="processing-content">
+                    <mat-spinner diameter="20"></mat-spinner>
+                    Processing...
+                  </span>
+                } @else {
+                  <span class="pay-btn-content">
+                    <mat-icon>lock</mat-icon>
+                    Pay ₹{{ selectedPolicy?.premiumAmount | number: '1.2-2' }}
+                  </span>
+                }
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 3: Confirmation -->
+    <mat-step label="Confirmation">
+      <div class="step-content">
+        <mat-card class="step-card confirmation-card">
+          @if (paymentComplete && lastPayment) {
+            <mat-card-header>
+              <mat-icon mat-card-avatar class="success-icon">check_circle</mat-icon>
+              <mat-card-title>Payment Successful!</mat-card-title>
+              <mat-card-subtitle>Your premium has been paid successfully</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <div class="confirmation-details">
+                <div class="detail-row">
+                  <span class="label">Payment ID</span>
+                  <span class="value">{{ lastPayment.paymentId }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Receipt Number</span>
+                  <span class="value">{{ lastPayment.receiptNumber }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Amount Paid</span>
+                  <span class="value amount">₹{{ lastPayment.amount | number: '1.2-2' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Payment Method</span>
+                  <span class="value">{{ lastPayment.paymentMethod | titlecase }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Date</span>
+                  <span class="value">{{ lastPayment.paymentDate | date: 'medium' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="label">Status</span>
+                  <span class="value status-completed">Completed</span>
+                </div>
+              </div>
+            </mat-card-content>
+
+            <mat-card-actions align="end">
+              <button mat-button (click)="viewReceipt()">
+                <span class="pay-btn-content">
+                  <mat-icon>receipt</mat-icon>
+                  View Receipt
+                </span>
+              </button>
+              <button mat-raised-button color="primary" (click)="resetForm()">
+                <span class="pay-btn-content">
+                  <mat-icon>add</mat-icon>
+                  Make Another Payment
+                </span>
+              </button>
+            </mat-card-actions>
+          } @else {
+            <mat-card-content>
+              <div class="pending-message">
+                <mat-icon>hourglass_empty</mat-icon>
+                <p>Complete the payment to see confirmation.</p>
+              </div>
+            </mat-card-content>
+          }
+        </mat-card>
+      </div>
+    </mat-step>
+  </mat-stepper>
+</div>
+
+<!-- Inline Receipt Overlay -->
+@if (showReceipt && lastPayment) {
+  <div class="receipt-overlay" (click)="closeReceipt()">
+    <div class="receipt-panel" (click)="$event.stopPropagation()">
+      <div class="receipt-header">
+        <mat-icon class="brand-icon">shield</mat-icon>
+        <h2>InsureHub</h2>
+        <p class="subtitle">Premium Payment Receipt</p>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="receipt-body">
+        <div class="receipt-row">
+          <span class="label">Receipt Number</span>
+          <span class="value highlight">{{ lastPayment.receiptNumber }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Payment ID</span>
+          <span class="value">{{ lastPayment.paymentId }}</span>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        @if (selectedPolicy) {
+          <div class="section-title">Policy Details</div>
+          <div class="receipt-row">
+            <span class="label">Policy Number</span>
+            <span class="value">{{ selectedPolicy.policyNumber }}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Holder Name</span>
+            <span class="value">{{ selectedPolicy.holderName }}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Policy Type</span>
+            <span class="value">{{ selectedPolicy.type | titlecase }}</span>
+          </div>
+          <mat-divider></mat-divider>
+        }
+
+        <div class="section-title">Payment Details</div>
+        <div class="receipt-row">
+          <span class="label">Amount Paid</span>
+          <span class="value amount">₹{{ lastPayment.amount | number: '1.2-2' }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Payment Method</span>
+          <span class="value">{{ lastPayment.paymentMethod | titlecase }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Payment Date</span>
+          <span class="value">{{ lastPayment.paymentDate | date: 'medium' }}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="label">Status</span>
+          <span class="value status-badge">{{ lastPayment.status | titlecase }}</span>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="receipt-footer">
+        <p class="disclaimer">
+          This is a computer-generated receipt and does not require a signature.
+        </p>
+        <div class="actions">
+          <button mat-button (click)="printReceipt()">
+            <span class="pay-btn-content"><mat-icon>print</mat-icon> Print</span>
+          </button>
+          <button mat-raised-button color="primary" (click)="closeReceipt()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

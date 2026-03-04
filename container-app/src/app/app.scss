@@ -1,0 +1,20 @@
+.app-container {
+  position: absolute;
+  top: 64px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.app-sidenav {
+  width: 272px;
+  border-right: none !important;
+  background: var(--ih-surface-card) !important;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.03) !important;
+}
+
+.app-content {
+  background: var(--ih-surface);
+  min-height: 100%;
+  padding: 0;
+}

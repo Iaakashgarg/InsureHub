@@ -1,0 +1,85 @@
+@use '@angular/material' as mat;
+
+:root {
+  --ih-primary: #6d28d9;
+  --ih-primary-light: #8b5cf6;
+  --ih-accent: #06b6d4;
+  --ih-success: #10b981;
+  --ih-warning: #f59e0b;
+  --ih-danger: #ef4444;
+  --ih-surface: #f8fafc;
+  --ih-surface-card: #ffffff;
+  --ih-border: #e2e8f0;
+  --ih-text-primary: #1e293b;
+  --ih-text-secondary: #64748b;
+  --ih-text-muted: #94a3b8;
+  --ih-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --ih-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --ih-radius-sm: 8px;
+  --ih-radius-md: 12px;
+  --ih-radius-lg: 16px;
+  --ih-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: mat.$violet-palette,
+        tertiary: mat.$cyan-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+body {
+  color-scheme: light;
+  background-color: var(--ih-surface);
+  color: var(--ih-text-primary);
+  font-family:
+    'Inter',
+    'Roboto',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  margin: 0;
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 99px;
+  &:hover {
+    background: #94a3b8;
+  }
+}
+
+.mat-mdc-card {
+  border-radius: var(--ih-radius-md) !important;
+  box-shadow: var(--ih-shadow-sm) !important;
+  border: 1px solid var(--ih-border);
+}
+
+.mat-mdc-table {
+  .mat-mdc-header-row {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  }
+  .mat-mdc-header-cell {
+    color: var(--ih-text-secondary) !important;
+    font-weight: 600 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+  }
+}
