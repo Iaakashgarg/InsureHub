@@ -1,0 +1,15 @@
+[build]
+  base = "mfe-premium-payment"
+  command = "npm run build"
+  publish = "dist/mfe-premium-payment"
+
+[[headers]]
+  for = "/remoteEntry.js"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "no-cache"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
