@@ -8,10 +8,13 @@ const path = require('path');
 const POLICY_DASHBOARD_URL = process.env.MFE_POLICY_DASHBOARD_URL || 'http://localhost:4201';
 const PREMIUM_PAYMENT_URL = process.env.MFE_PREMIUM_PAYMENT_URL || 'http://localhost:4202';
 
+console.log('[MF Remotes] MFE_POLICY_DASHBOARD_URL =', POLICY_DASHBOARD_URL);
+console.log('[MF Remotes] MFE_PREMIUM_PAYMENT_URL  =', PREMIUM_PAYMENT_URL);
+
 const mfConfig = withModuleFederationPlugin({
   remotes: {
-    mfePolicyDashboard: `${POLICY_DASHBOARD_URL}/remoteEntry.js`,
-    mfePremiumPayment: `${PREMIUM_PAYMENT_URL}/remoteEntry.js`,
+    mfePolicyDashboard: `mfePolicyDashboard@${POLICY_DASHBOARD_URL}/remoteEntry.js`,
+    mfePremiumPayment: `mfePremiumPayment@${PREMIUM_PAYMENT_URL}/remoteEntry.js`,
   },
 
   shared: {
