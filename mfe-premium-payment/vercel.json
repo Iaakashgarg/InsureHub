@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "cd ../shared-lib && npm install && cd ../mfe-premium-payment && npm run build",
   "outputDirectory": "dist/mfe-premium-payment",
   "installCommand": "npm install",
   "framework": null,

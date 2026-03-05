@@ -54,7 +54,7 @@
             "styles": ["src/styles.scss"],
             "main": "src/main.ts",
             "outputPath": "dist/mfe-premium-payment",
-            "index": "src\\index.html",
+            "index": "src/index.html",
             "extraWebpackConfig": "webpack.config.js",
             "commonChunk": false
           },
