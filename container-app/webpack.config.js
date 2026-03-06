@@ -2,6 +2,7 @@ const {
   shareAll,
   withModuleFederationPlugin,
 } = require('@angular-architects/module-federation/webpack');
+const webpack = require('webpack');
 const path = require('path');
 
 // Use environment variables for production remote URLs, fallback to localhost for dev
@@ -21,6 +22,15 @@ const mfConfig = withModuleFederationPlugin({
     ...shareAll({ singleton: true, strictVersion: true, requiredVersion: 'auto' }),
   },
 });
+
+// Inject env vars into Angular code at build time via DefinePlugin
+mfConfig.plugins = mfConfig.plugins || [];
+mfConfig.plugins.push(
+  new webpack.DefinePlugin({
+    'process.env.MFE_POLICY_DASHBOARD_URL': JSON.stringify(POLICY_DASHBOARD_URL),
+    'process.env.MFE_PREMIUM_PAYMENT_URL': JSON.stringify(PREMIUM_PAYMENT_URL),
+  }),
+);
 
 // Ensure shared-lib imports resolve from this app's node_modules
 mfConfig.resolve = mfConfig.resolve || {};
