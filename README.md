@@ -1,6 +1,7 @@
 # InsureHub - Insurance Micro-Frontend Application
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-insure--hub.vercel.app-blue?style=for-the-badge&logo=vercel)](https://insure-hub.vercel.app/)
+
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/Iaakashgarg/InsureHub)
 
 > 🌐 **Deployed App:** [https://insure-hub.vercel.app](https://insure-hub.vercel.app/)
