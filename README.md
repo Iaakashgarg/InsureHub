@@ -1,5 +1,12 @@
 # InsureHub - Insurance Micro-Frontend Application
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-insure--hub.vercel.app-blue?style=for-the-badge&logo=vercel)](https://insure-hub.vercel.app/)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/Iaakashgarg/InsureHub)
+
+> 🌐 **Deployed App:** [https://insure-hub.vercel.app](https://insure-hub.vercel.app/)
+
+> 📦 **Source Code:** [https://github.com/Iaakashgarg/InsureHub](https://github.com/Iaakashgarg/InsureHub)
+
 A modular insurance platform built with **Angular 21**, **Angular Material 3**, and **Webpack Module Federation**. The application demonstrates a micro-frontend architecture with SSE-like cross-MFE communication via the BroadcastChannel API.
 
 ---
@@ -8,7 +15,7 @@ A modular insurance platform built with **Angular 21**, **Angular Material 3**, 
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│                  Container Shell (port 4200)          │
+│                  Container App (port 4200)          │
 │  ┌────────┐  ┌─────────────┐  ┌───────────────────┐  │
 │  │ Header │  │   Sidebar   │  │   Router Outlet    │  │
 │  └────────┘  └─────────────┘  │  ┌──────────────┐ │  │
@@ -32,76 +39,6 @@ A modular insurance platform built with **Angular 21**, **Angular Material 3**, 
 └───────────────────┘        └───────────────────┘
 ```
 
-## 📂 Project Structure
-
-```
-insure-hub/
-├── shared-lib/                    # Shared library (no framework dependency)
-│   └── src/
-│       ├── models/                # TypeScript interfaces
-│       │   ├── policy.interface.ts
-│       │   ├── payment.interface.ts
-│       │   ├── user.interface.ts
-│       │   └── sse-event.interface.ts
-│       ├── sse/                   # SSE communication layer
-│       │   ├── sse-broker.ts      # Central broker (container)
-│       │   ├── sse-producer.ts    # Event publisher (MFEs)
-│       │   ├── sse-consumer.ts    # Event subscriber (MFEs)
-│       │   └── sse-event-types.ts # Stream & event type constants
-│       ├── storage/               # Storage abstraction
-│       │   └── storage-adapter.ts # localStorage wrapper
-│       ├── styles/
-│       │   └── _theme.scss        # Shared theme variables
-│       └── index.ts               # Barrel exports
-│
-├── container-app/                 # Shell/Host application
-│   ├── webpack.config.js          # Module Federation host config
-│   └── src/app/
-│       ├── components/
-│       │   ├── header/            # Top navigation bar
-│       │   ├── sidebar/           # Side navigation
-│       │   └── home/              # Dashboard with stats
-│       ├── services/
-│       │   ├── sse-broker.service.ts   # SSE broker + navigation handler
-│       │   └── storage.service.ts      # Angular storage wrapper
-│       ├── data/
-│       │   └── mock-policies.ts   # Seed data (6 policies)
-│       ├── app.routes.ts          # Routes with loadRemoteModule
-│       ├── app.config.ts
-│       ├── app.ts / app.html / app.scss
-│       └── styles.scss            # Material 3 indigo theme
-│
-├── mfe-policy-dashboard/          # MFE1: Policy management
-│   ├── webpack.config.js          # Module Federation remote config
-│   └── src/app/
-│       ├── components/
-│       │   ├── policy-list/       # Table with sort/paginator/filter
-│       │   ├── policy-detail/     # Detail view with info grid
-│       │   └── coverage-info/     # Expansion panel for coverages
-│       ├── services/
-│       │   ├── policy.service.ts         # CRUD via StorageAdapter
-│       │   ├── sse-publisher.service.ts  # Emits policy & nav events
-│       │   └── premium-worker.service.ts # Web Worker wrapper
-│       ├── workers/
-│       │   └── premium-calculator.worker.ts  # Background premium calc
-│       └── policy/
-│           └── policy.routes.ts   # Exposed routes
-│
-└── mfe-premium-payment/           # MFE2: Payment processing
-    ├── webpack.config.js          # Module Federation remote config
-    └── src/app/
-        ├── components/
-        │   ├── payment-form/      # 3-step stepper (select → pay → confirm)
-        │   ├── payment-history/   # Table with search, stats cards
-        │   └── receipt/           # Dialog-based receipt viewer
-        ├── services/
-        │   ├── payment.service.ts            # Payment CRUD + policy update
-        │   ├── sse-listener.service.ts       # Listens for policy events
-        │   └── sse-payment-publisher.service.ts  # Emits payment events
-        └── payment/
-            └── payment.routes.ts  # Exposed routes
-```
-
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -113,6 +50,9 @@ insure-hub/
 
 ```bash
 cd insure-hub
+
+# Install shared-lib dependencies
+cd shared-lib && npm install && cd ..
 
 # Install dependencies for each app
 cd container-app && npm install && cd ..
@@ -128,33 +68,34 @@ Start all three apps simultaneously (each in its own terminal):
 
 ```bash
 cd mfe-policy-dashboard
-ng serve --port 4201
+npm start
 ```
 
 **Terminal 2 - MFE2 Premium Payment (port 4202):**
 
 ```bash
 cd mfe-premium-payment
-ng serve --port 4202
+npm start
 ```
 
-**Terminal 3 - Container Shell (port 4200):**
+**Terminal 3 - Container App (port 4200):**
 
 ```bash
 cd container-app
-ng serve --port 4200
+npm start
 ```
 
 Open http://localhost:4200 in your browser.
 
-> **Note:** Start MFE1 and MFE2 before the container app. The container loads MFE remotes at runtime via their `remoteEntry.js`.
+> **Note:** Start MFE1 and MFE2 **before** the container app. The container loads MFE remotes at runtime via their `remoteEntry.js`. Ports are pre-configured in each app's `angular.json`.
 
 ### Building for Production
 
 ```bash
-cd container-app && ng build --configuration production
-cd mfe-policy-dashboard && ng build --configuration production
-cd mfe-premium-payment && ng build --configuration production
+cd shared-lib && npm install && cd ..
+cd container-app && npm run build && cd ..
+cd mfe-policy-dashboard && npm run build && cd ..
+cd mfe-premium-payment && npm run build && cd ..
 ```
 
 ---
@@ -216,12 +157,18 @@ User clicks "Pay Premium" on policy list (MFE1)
 ### Container (Host)
 
 ```javascript
-// Loads MFE1 and MFE2 at runtime
+// Remote URLs are read from environment variables (set in Vercel dashboard)
+// Defaults to localhost for local development
+const POLICY_DASHBOARD_URL = process.env.MFE_POLICY_DASHBOARD_URL || 'http://localhost:4201';
+const PREMIUM_PAYMENT_URL = process.env.MFE_PREMIUM_PAYMENT_URL || 'http://localhost:4202';
+
 remotes: {
-  mfePolicyDashboard: 'http://localhost:4201/remoteEntry.js',
-  mfePremiumPayment:  'http://localhost:4202/remoteEntry.js',
+  mfePolicyDashboard: `mfePolicyDashboard@${POLICY_DASHBOARD_URL}/remoteEntry.js`,
+  mfePremiumPayment:  `mfePremiumPayment@${PREMIUM_PAYMENT_URL}/remoteEntry.js`,
 }
 ```
+
+> Remote URLs are injected into Angular code at build time using webpack `DefinePlugin`.
 
 ### MFE1 (Remote)
 
